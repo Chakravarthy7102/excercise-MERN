@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const connection = require("./db/connection");
+const excersicesRouter = require("./routes/excersice");
+const usersRouter = require("./routes/users");
 const app = express();
 require("dotenv").config();
 
@@ -11,10 +13,12 @@ PORT_NUMBER = process.env.PORT || process.env.PORT_NUMBER;
 app.use(express.json());
 app.use(cors());
 
+//main routes
+
+app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/exercises", excersicesRouter);
+
 //starting the server
-app.get("/", (req, res) => {
-  res.send("this is backends first page");
-});
 
 const start = () => {
   try {
