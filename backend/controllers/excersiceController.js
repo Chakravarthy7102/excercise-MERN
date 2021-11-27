@@ -2,6 +2,7 @@ const ExerciseModel = require("../model/exerciseModel");
 
 //excersice controllers
 
+//get all excersises
 const getAllExercises = async (req, res) => {
   try {
     const excersice = await ExerciseModel.find();
@@ -12,6 +13,8 @@ const getAllExercises = async (req, res) => {
     });
   }
 };
+
+//add new excersice
 
 const addExercise = async (req, res) => {
   try {
@@ -44,4 +47,55 @@ const addExercise = async (req, res) => {
   }
 };
 
-module.exports = { getAllExercises, addExercise };
+//delete a excersize by id
+const deleteExcersise = async (req, res) => {
+  try {
+    const excersise = await ExerciseModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      msg: "item deleted",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "cannot process the request",
+    });
+  }
+};
+
+//find excersise by the id
+const getExcersiseById = async (req, res) => {
+  try {
+    const excersise = await ExerciseModel.findById(req.params.id);
+    res.status(200).json({
+      excersise,
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "excersise not found",
+    });
+  }
+};
+
+//update a excersise by its id
+const patchExcersise = async (req, res) => {
+  const { id: excersiseId } = req.params;
+  const query = { _id: excersiseId };
+  const excersise = await ExerciseModel.findByIdAndUpdate(query, req.body, {
+    runValidators: true,
+    new: true,
+  });
+
+  if (!excersise) {
+    res.status(400).json({
+      msg: `cannot deal with the id ${excersiseId}`,
+    });
+  }
+  res.status(200).json(excersise);
+};
+
+module.exports = {
+  getAllExercises,
+  addExercise,
+  deleteExcersise,
+  getExcersiseById,
+  patchExcersise,
+};
