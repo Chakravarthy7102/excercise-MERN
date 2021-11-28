@@ -1,16 +1,27 @@
 import React, { useState } from "react";
+import axios from "axios";
+
+const POST_URL = "http://localhost:3001/api/v1/users/add";
 
 function CreateUser() {
   const [username, setusername] = useState("");
 
   //onSubmit
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const user = {
       username: username,
     };
-    console.log(user);
-    // window.location.replace("/");
+
+    //making the post request to the sever
+
+    try {
+      await axios.post(POST_URL, user).then((res) => console.log(res.data));
+    } catch (error) {
+      console.log(error);
+    }
+
+    setusername("");
   };
 
   //onChangeUsername
@@ -22,6 +33,7 @@ function CreateUser() {
   return (
     <div className="container my-3">
       <h3>Create New User</h3>
+
       <form onSubmit={onSubmit}>
         <div className="form-group my-3">
           <label>

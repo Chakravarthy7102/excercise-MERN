@@ -1,9 +1,13 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
+import axios from "axios";
 
 import "react-datepicker/dist/react-datepicker.css";
 //npm i react-datepicker
+
+const POST_EXCERSISE = "http://localhost:3001/api/v1/exercises/add";
+const GET_USERS = "http://localhost:3001/api/v1/users";
 
 //on submit button handler
 
@@ -15,16 +19,19 @@ function CreateExcersise() {
   const [date, setdate] = useState(new Date());
   const [users, setusers] = useState([]);
 
-  //use ref
-  // const selectref = useRef();
-
   //useEffect is same as the componet did mount react class lifecycle method
   useEffect(() => {
-    setusers(["name", "akira", "kakashi"]);
-    setusername("akira");
-    setdescription("the god of devils");
-    setduration(10);
-    setdate(new Date().getTime());
+    axios
+      .get(GET_USERS)
+      .then((response) => {
+        if (response.data.data.length > 0) {
+          setusers(response.data.data.map((user) => user.username));
+          setusername(response.data.data[0].username);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   //onchange in username
@@ -45,7 +52,7 @@ function CreateExcersise() {
     setdate(date);
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     // e.preventDefault();
     e.preventDefault();
     const excersice = {
@@ -55,7 +62,18 @@ function CreateExcersise() {
       date: date,
       users: users,
     };
-    console.log(excersice);
+
+    try {
+      await axios.post(POST_EXCERSISE, excersice).then((res) => {
+        console.log(res.data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    setdescription("");
+    setduration(0);
+
     window.location.replace("/");
   };
 
